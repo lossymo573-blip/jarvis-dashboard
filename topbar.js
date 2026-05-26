@@ -20,7 +20,11 @@
   position: sticky; top: 0; z-index: 40;
   display: flex; justify-content: flex-end; align-items: center;
   gap: 8px;
-  padding: max(10px, env(safe-area-inset-top)) 14px 8px;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    max(14px, env(safe-area-inset-right))
+    8px
+    max(14px, env(safe-area-inset-left));
   background: #0a0a0b;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
@@ -85,7 +89,11 @@
 .bottombar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
   display: flex; justify-content: space-around; align-items: stretch;
-  padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+  padding:
+    6px
+    env(safe-area-inset-right)
+    calc(6px + env(safe-area-inset-bottom))
+    env(safe-area-inset-left);
   background: #0a0a0b;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
@@ -112,7 +120,7 @@ body.has-bottombar {
   padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
 }
 @media (max-width: 480px) {
-  .topbar { padding-left: 10px; padding-right: 10px; gap: 6px; }
+  .topbar { padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); gap: 6px; }
   .topbar-water-pill { padding: 8px 11px; gap: 6px; }
   .topbar-pill-count { font-size: 12px; }
   .topbar-water-add { width: 40px; font-size: 18px; }
