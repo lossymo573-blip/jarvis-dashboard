@@ -700,8 +700,8 @@ body::after {
   // Paste your Anthropic key here to enable ✨ Polish. Empty = falls back to plain add.
   const ANTHROPIC_API_KEY = '';
 
-  const WAKE_HOUR  = 8;
-  const SLEEP_HOUR = 24;
+  const WAKE_HOUR  = 10;
+  const SLEEP_HOUR = 25; // 1 AM next day, expressed as 24+1 so the awake window crosses midnight
 
   // ---------- storage helpers ----------
   function storeGet(key) {
@@ -921,7 +921,12 @@ body::after {
 
   function updateDayRing() {
     const now = new Date();
-    const hours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    let hours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    // Wrap-around: if the awake window crosses midnight (SLEEP_HOUR > 24),
+    // shift early-morning times by +24 so they still fall inside the window.
+    if (SLEEP_HOUR > 24 && hours < (SLEEP_HOUR - 24)) {
+      hours += 24;
+    }
     const percentEl   = document.getElementById('dayRingPercent');
     const phaseEl     = document.getElementById('dayRingPhase');
     const clockEl     = document.getElementById('dayRingClock');
