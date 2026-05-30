@@ -593,6 +593,132 @@ body::after {
   .gm-card { padding: 16px; }
   .gm-progress-num { font-size: 36px; }
 }
+
+/* ===== Component 5: Productivity (Pomofocus focus data) ===== */
+/* Hero stat tiles — same look as the finance "1% =" / "All-time high" tiles. */
+.pf-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.pf-tile {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.pf-tile-num {
+  font-size: 26px; font-weight: 800;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.pf-tile-label {
+  font-family: var(--font-mono);
+  font-size: 9px; font-weight: 800;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+@media (max-width: 480px) {
+  .pf-tiles { grid-template-columns: repeat(2, 1fr); }
+  .pf-tile-num { font-size: 22px; }
+}
+
+.pf-block { margin-bottom: 20px; }
+.pf-block:last-child { margin-bottom: 0; }
+.pf-block-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: 10px;
+}
+.pf-block-title {
+  font-family: var(--font-mono);
+  font-size: 9.5px; font-weight: 800;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.pf-badge {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 3px 9px; border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+.pf-badge-up      { background: rgba(107,227,164,0.12); color: var(--success); }
+.pf-badge-down    { background: rgba(255,107,107,0.12); color: var(--danger); }
+.pf-badge-neutral { background: rgba(255,255,255,0.05); color: var(--text-tertiary); }
+
+.pf-chart { width: 100%; }
+.pf-chart svg { width: 100%; height: auto; display: block; }
+
+.pf-tasklist { list-style: none; margin: 0; padding: 0; }
+.pf-task {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.045);
+  font-size: 13px;
+}
+.pf-task:last-child { border-bottom: none; }
+.pf-task-rank {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700;
+  color: var(--text-tertiary);
+  width: 16px; flex-shrink: 0;
+}
+.pf-task-name {
+  flex: 1; color: var(--text-primary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pf-task-dur {
+  font-family: var(--font-mono);
+  font-size: 12px; font-weight: 700;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* GitHub-style consistency heatmap — scrolls horizontally on narrow screens. */
+.pf-heatmap-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+.pf-heatmap {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 3px;
+  width: max-content;
+}
+.pf-cell {
+  width: 13px; height: 13px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.05);
+}
+.pf-cell-1 { background: rgba(107,227,164,0.25); }
+.pf-cell-2 { background: rgba(107,227,164,0.50); }
+.pf-cell-3 { background: #6BE3A4; }
+.pf-cell-4 { background: #1f9d5f; box-shadow: 0 0 6px rgba(31,157,95,0.55); }
+.pf-heatmap-label {
+  font-family: var(--font-mono);
+  font-size: 9px; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-top: 8px;
+}
+@media (max-width: 480px) {
+  .pf-cell { width: 11px; height: 11px; }
+}
+
+.pf-empty {
+  font-size: 12px; font-style: italic;
+  color: var(--text-tertiary);
+  padding: 10px 0;
+}
 </style>
 </head>
 <body>
@@ -636,6 +762,52 @@ body::after {
       <div class="day-ring-status"    id="dayRingStatus">Loading…</div>
       <div class="day-ring-remaining" id="dayRingRemaining">—</div>
       <div class="day-ring-hours">8:00 AM – 12:00 AM</div>
+    </div>
+  </div>
+
+  <!-- ===== Productivity (Pomofocus focus data) ===== -->
+  <div class="section">
+    <div class="section-title">Productivity</div>
+    <div class="gm-card" id="pfCard">
+
+      <!-- 1. Hero stats -->
+      <div class="pf-tiles">
+        <div class="pf-tile"><div class="pf-tile-num" id="pfToday">—</div><div class="pf-tile-label">Today · min</div></div>
+        <div class="pf-tile"><div class="pf-tile-num" id="pfTodayPoms">—</div><div class="pf-tile-label">Today Poms</div></div>
+        <div class="pf-tile"><div class="pf-tile-num" id="pfStreak">—</div><div class="pf-tile-label">Streak</div></div>
+        <div class="pf-tile"><div class="pf-tile-num" id="pfAvg">—</div><div class="pf-tile-label">Avg / Day</div></div>
+      </div>
+
+      <!-- 2. Week chart -->
+      <div class="pf-block">
+        <div class="pf-block-head">
+          <div class="pf-block-title">Last 7 Days</div>
+          <span class="pf-badge pf-badge-neutral" id="pfWeekBadge">— vs last week</span>
+        </div>
+        <div class="pf-chart" id="pfWeekChart"></div>
+      </div>
+
+      <!-- 3. Top tasks this week -->
+      <div class="pf-block">
+        <div class="pf-block-head"><div class="pf-block-title">Top Tasks · This Week</div></div>
+        <ul class="pf-tasklist" id="pfTopTasks">
+          <li class="pf-empty">No focus sessions yet this week.</li>
+        </ul>
+      </div>
+
+      <!-- 4. When you focus best -->
+      <div class="pf-block">
+        <div class="pf-block-head"><div class="pf-block-title">When You Focus Best</div></div>
+        <div class="pf-chart" id="pfHourChart"></div>
+      </div>
+
+      <!-- 5. Consistency heatmap -->
+      <div class="pf-block">
+        <div class="pf-block-head"><div class="pf-block-title">Consistency · 90 Days</div></div>
+        <div class="pf-heatmap-scroll"><div class="pf-heatmap" id="pfHeatmap"></div></div>
+        <div class="pf-heatmap-label" id="pfHeatmapLabel">— &mdash; TODAY</div>
+      </div>
+
     </div>
   </div>
 
@@ -1324,6 +1496,252 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+</script>
+<script>
+/* ===== Productivity section — visualizes Pomofocus focus data from Supabase ===== */
+(function () {
+  'use strict';
+
+  // Same Supabase project as topbar.js / sync.js. supabase-js is loaded in <head>.
+  const SUPABASE_URL = 'https://pupgpyhvwqlaogfpupoz.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable__mfDd-My4PNl8DRBEX__sw_VK0Q7Ejm';
+
+  const DAY_MS = 86400000;
+  const MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const WD  = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  let supa = null;
+
+  // ---------- small helpers ----------
+  function localDayKey(d) {
+    return d.getFullYear() + '-' +
+           String(d.getMonth() + 1).padStart(2, '0') + '-' +
+           String(d.getDate()).padStart(2, '0');
+  }
+  function dayKeyOffset(n) { // key for n days ago (local)
+    const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - n);
+    return localDayKey(d);
+  }
+  function fmtDur(secs) {
+    const m = Math.round(secs / 60), h = Math.floor(m / 60), mm = m % 60;
+    return h > 0 ? (h + 'h ' + mm + 'm') : (mm + 'm');
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+  // ---------- chart builders (vanilla SVG) ----------
+  function svgWeek(days) {
+    const W = 300, H = 132, padB = 20, padT = 12, padX = 4;
+    const innerW = W - padX * 2;
+    const max = Math.max(1, Math.max.apply(null, days.map(function (d) { return d.minutes; })));
+    const slot = innerW / days.length;
+    const bw = Math.min(28, slot * 0.62);
+    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Focused minutes per day, last 7 days">';
+    days.forEach(function (d, i) {
+      const bh = Math.round((d.minutes / max) * (H - padB - padT));
+      const x = padX + i * slot + (slot - bw) / 2;
+      const y = H - padB - bh;
+      const fill = d.isToday ? '#6BE3A4' : 'rgba(107,227,164,0.38)';
+      const glow = d.isToday ? ' style="filter:drop-shadow(0 0 5px rgba(107,227,164,0.6))"' : '';
+      s += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) +
+           '" height="' + Math.max(bh, 2) + '" rx="3" fill="' + fill + '"' + glow + '/>';
+      if (d.minutes > 0) {
+        s += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (y - 4).toFixed(1) +
+             '" text-anchor="middle" font-size="9" font-family="ui-monospace,monospace" fill="#76746E">' +
+             d.minutes + '</text>';
+      }
+      s += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 6) +
+           '" text-anchor="middle" font-size="10" font-family="ui-monospace,monospace" font-weight="' +
+           (d.isToday ? '800' : '600') + '" fill="' + (d.isToday ? '#FAFAFA' : '#76746E') + '">' +
+           d.label + '</text>';
+    });
+    return s + '</svg>';
+  }
+
+  function svgHours(avgMin) {
+    const W = 360, H = 120, padB = 18, padT = 8, padX = 2;
+    const innerW = W - padX * 2;
+    const max = Math.max.apply(null, avgMin);
+    const denom = max > 0 ? max : 1;
+    const slot = innerW / 24, bw = slot * 0.7;
+    let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Average focused minutes by hour of day, last 30 days">';
+    avgMin.forEach(function (v, h) {
+      const bh = Math.round((v / denom) * (H - padB - padT));
+      const x = padX + h * slot + (slot - bw) / 2;
+      const y = H - padB - bh;
+      const a = (0.2 + 0.8 * (v / denom)).toFixed(2);
+      const isPeak = v > 0 && v >= max * 0.999;
+      const glow = isPeak ? ' style="filter:drop-shadow(0 0 5px rgba(107,227,164,0.7))"' : '';
+      s += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) +
+           '" height="' + Math.max(bh, 1) + '" rx="2" fill="rgba(107,227,164,' + a + ')"' + glow + '/>';
+    });
+    [[6, '6a'], [10, '10a'], [14, '2p'], [18, '6p'], [22, '10p']].forEach(function (p) {
+      const x = padX + p[0] * slot + slot / 2;
+      s += '<text x="' + x.toFixed(1) + '" y="' + (H - 5) +
+           '" text-anchor="middle" font-size="9" font-family="ui-monospace,monospace" fill="#76746E">' +
+           p[1] + '</text>';
+    });
+    return s + '</svg>';
+  }
+
+  // ---------- main render ----------
+  function render() {
+    if (!supa) return;
+    const since = new Date(Date.now() - 90 * DAY_MS).toISOString();
+    supa.from('pomodoro_log').select('*').gte('ended_at', since)
+        .order('ended_at', { ascending: false })
+        .then(function (res) { compute((res && res.data) || []); })
+        .catch(function () { compute([]); });
+  }
+
+  function compute(rows) {
+    // Enrich each row with local-day + local-hour derived from ended_at.
+    const enriched = rows.map(function (r) {
+      const d = new Date(r.ended_at);
+      return {
+        key: localDayKey(d),
+        hour: d.getHours(),
+        secs: r.duration_seconds || 0,
+        finish: r.event_type === 'finish',
+        task: (r.task || '').trim()
+      };
+    });
+
+    const secsByDay = {}, finishByDay = {};
+    enriched.forEach(function (r) {
+      secsByDay[r.key] = (secsByDay[r.key] || 0) + r.secs;
+      if (r.finish) finishByDay[r.key] = (finishByDay[r.key] || 0) + 1;
+    });
+
+    // --- 1. Hero stats ---
+    const todayKey = dayKeyOffset(0);
+    setText('pfToday', Math.round((secsByDay[todayKey] || 0) / 60));
+    setText('pfTodayPoms', finishByDay[todayKey] || 0);
+
+    // Streak: consecutive days with >=1 finish, counting back from today.
+    // If today has none yet, start from yesterday so it isn't prematurely zeroed.
+    let streak = 0;
+    const c = new Date(); c.setHours(0, 0, 0, 0);
+    if (!(finishByDay[localDayKey(c)] > 0)) c.setDate(c.getDate() - 1);
+    while (finishByDay[localDayKey(c)] > 0) { streak++; c.setDate(c.getDate() - 1); }
+    setText('pfStreak', streak);
+
+    // Avg/day: finish events per day over last 7 days, 1 decimal.
+    let f7 = 0;
+    for (let i = 0; i < 7; i++) f7 += finishByDay[dayKeyOffset(i)] || 0;
+    setText('pfAvg', (f7 / 7).toFixed(1));
+
+    // --- 2. Week chart (last 7 days, oldest left) ---
+    const weekDays = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
+      const k = localDayKey(d);
+      weekDays.push({ label: WD[d.getDay()], minutes: Math.round((secsByDay[k] || 0) / 60), isToday: i === 0 });
+    }
+    const wc = document.getElementById('pfWeekChart');
+    if (wc) wc.innerHTML = svgWeek(weekDays);
+
+    // Week-over-week badge (compare focused seconds this 7d vs prior 7d).
+    let thisW = 0, lastW = 0;
+    for (let i = 0; i < 7; i++) thisW += secsByDay[dayKeyOffset(i)] || 0;
+    for (let i = 7; i < 14; i++) lastW += secsByDay[dayKeyOffset(i)] || 0;
+    const badge = document.getElementById('pfWeekBadge');
+    if (badge) {
+      let txt, cls;
+      if (thisW === 0 && lastW === 0) { txt = '— vs last week'; cls = 'pf-badge-neutral'; }
+      else if (lastW === 0) { txt = '+100% vs last week'; cls = 'pf-badge-up'; }
+      else {
+        const pct = Math.round((thisW - lastW) / lastW * 100);
+        const sign = pct >= 0 ? '+' : '−';
+        txt = sign + Math.abs(pct) + '% vs last week';
+        cls = pct > 0 ? 'pf-badge-up' : (pct < 0 ? 'pf-badge-down' : 'pf-badge-neutral');
+      }
+      badge.className = 'pf-badge ' + cls;
+      badge.textContent = txt;
+    }
+
+    // --- 3. Top tasks this week (top 5 by duration, skip empty) ---
+    const last7 = {};
+    for (let i = 0; i < 7; i++) last7[dayKeyOffset(i)] = true;
+    const taskSecs = {};
+    enriched.forEach(function (r) {
+      if (!last7[r.key] || !r.task) return;
+      taskSecs[r.task] = (taskSecs[r.task] || 0) + r.secs;
+    });
+    const top = Object.keys(taskSecs)
+      .map(function (t) { return [t, taskSecs[t]]; })
+      .sort(function (a, b) { return b[1] - a[1]; })
+      .slice(0, 5);
+    const tl = document.getElementById('pfTopTasks');
+    if (tl) {
+      tl.innerHTML = top.length
+        ? top.map(function (t, i) {
+            return '<li class="pf-task"><span class="pf-task-rank">' + (i + 1) +
+                   '.</span><span class="pf-task-name">' + esc(t[0]) +
+                   '</span><span class="pf-task-dur">' + fmtDur(t[1]) + '</span></li>';
+          }).join('')
+        : '<li class="pf-empty">No focus sessions yet this week.</li>';
+    }
+
+    // --- 4. When you focus best (avg focused min/hour over last 30 days) ---
+    const last30 = {};
+    for (let i = 0; i < 30; i++) last30[dayKeyOffset(i)] = true;
+    const hourSecs = new Array(24).fill(0);
+    enriched.forEach(function (r) { if (last30[r.key]) hourSecs[r.hour] += r.secs; });
+    const hourAvgMin = hourSecs.map(function (s) { return s / 60 / 30; });
+    const hc = document.getElementById('pfHourChart');
+    if (hc) hc.innerHTML = svgHours(hourAvgMin);
+
+    // --- 5. Consistency heatmap (last 90 days, GitHub-style) ---
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+    const start = new Date(today0); start.setDate(start.getDate() - 89);
+    start.setDate(start.getDate() - start.getDay()); // align left column to a Sunday
+    let cells = '';
+    const d = new Date(start);
+    while (d <= today0) {
+      const k = localDayKey(d);
+      const n = finishByDay[k] || 0;
+      let cls = 'pf-cell';
+      if (n >= 6) cls += ' pf-cell-4';
+      else if (n >= 4) cls += ' pf-cell-3';
+      else if (n >= 2) cls += ' pf-cell-2';
+      else if (n >= 1) cls += ' pf-cell-1';
+      cells += '<div class="' + cls + '" title="' + MON[d.getMonth()] + ' ' + d.getDate() + ': ' +
+               n + ' pom' + (n === 1 ? '' : 's') + '"></div>';
+      d.setDate(d.getDate() + 1);
+    }
+    const hm = document.getElementById('pfHeatmap');
+    if (hm) hm.innerHTML = cells;
+    setText('pfHeatmapLabel', MON[start.getMonth()] + ' ' + start.getDate() + ' — TODAY');
+  }
+
+  // ---------- boot + refresh wiring ----------
+  function boot() {
+    if (!window.supabase || !SUPABASE_URL || !SUPABASE_KEY) return;
+    if (SUPABASE_URL.indexOf('PASTE-') === 0 || SUPABASE_KEY.indexOf('PASTE-') === 0) return;
+    supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    render();
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') render();
+    });
+    window.addEventListener('focus', render);
+
+    try {
+      supa.channel('pomodoro_log_realtime')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'pomodoro_log' }, function () { render(); })
+        .subscribe();
+    } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
 </script>
 </body>
 </html>
